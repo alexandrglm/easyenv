@@ -3,17 +3,21 @@
 clear
 echo "-----------------------------------------------------------------------------------------------"
 echo ""
-echo "          @alexandrglm/easyenv - PYTHON SELF-COMPILER & VENV SETUP"
+echo "          @alexandrglm/easyenv - 1.0 - PYTHON SELF-COMPILER & VENV SETUP"
 echo ""
 echo "   This script will automatically download, compile, and set up your desired Python version"
-echo "   as a virtual environment (venv) with ease."
+echo "   as a virtual environment (venv)."
+echo "   Perfect for those Debian users who need to set an specific & NON system-wide Python ver."
+echo "   for their projects, isolated from the system, with ease."
 echo ""
 echo "-----------------------------------------------------------------------------------------------"
 
+
 while true; do
 
+    echo ""
     echo 'Set Python Version to install (e.g. 3.11.11, 3.2, ...): '
-    read -p "(PYTHON VER?) ->" PYTHON_VER
+    read -p "(PYTHON VER?) ->   " PYTHON_VER
     
     if [[ "$PYTHON_VER" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
 
@@ -27,12 +31,12 @@ while true; do
 
 done
 echo ""
-echo "Set FOLDER NAME (not path) for Python & venv (e.g .venv ): "
-read -p "(PATH?) ->" VENV_DIR
-
 while true; do
+    
+    echo "Set FOLDER NAME (not path) for Python & venv (e.g .venv ): "
+    read -p "(PATH?) ->  " VENV_DIR
 
-    if [[ "$VENV_DIR" = ^[a-zA-Z0-9.-_]+$ ]]; then
+    if [[ "$VENV_DIR" =~ ^[a-zA-Z0-9._-]+$ ]]; then
 
         break
 
@@ -68,24 +72,26 @@ if [ $YES = "YES" ]; then
     rm -rf "./Python-$PYTHON_VER.tgz"
     mv "./Python-$PYTHON_VER" "./$VENV_DIR/$PYTHON_VER"
 
-    # cd "./$VENV_DIR/$PYTHON_VER"
-    # ./configure --prefix="$PWD/../../$VENV_DIR/$PYTHON_VER/install" --enable-optimizations
-    # make -j"$(nproc)"
-    # make install
+    cd "./$VENV_DIR/$PYTHON_VER"
+    ./configure --prefix="$PWD/../../$VENV_DIR/$PYTHON_VER/install" --enable-optimizations
+    make -j"$(nproc)"
+    make install
 
-    # cd ../../
-    # find "./$VENV_DIR/$PYTHON_VER/" -mindepth 1 ! -path "./$VENV_DIR/$PYTHON_VER/install*" -exec rm -rf {} +
+    cd ../../
+    find "./$VENV_DIR/$PYTHON_VER/" -mindepth 1 ! -path "./$VENV_DIR/$PYTHON_VER/install*" -exec rm -rf {} +
 
-    # "./$VENV_DIR/$PYTHON_VER/install/bin/python3" -m venv "./$VENV_DIR"
+    "./$VENV_DIR/$PYTHON_VER/install/bin/python3" -m venv "./$VENV_DIR"
 
+    echo ""
     echo "-----------------------------------------------------------------------------------------------"
-    echo "-> Python $PYTHON_VER (non system-wide) as venv has been succesfully installed for this project!"
+    echo "Python $PYTHON_VER (non system-wide) as venv has been succesfully installed for this project!"
     echo "-> Now, you can 'source ./$VENV_DIR/bin/activate' this project's venv!"
     exit 0
 
 
 else
+    echo ""
     echo "-----------------------------------------------------------------------------------------------"
-    echo "cancelled by the user, bye!"
+    echo "Cancelled by the user, bye!"
     exit 1
 fi
